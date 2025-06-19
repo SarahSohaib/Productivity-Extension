@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stay Focused 🌱</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #f1f1f1, #d6f5d6);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #2c7a2c;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    button {
+      background: #2c7a2c;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #256c25;
+    }
+
+    .quote {
+      margin-top: 25px;
+      font-style: italic;
+      font-size: 14px;
+      color: #555;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌿 Stay Focused!</h1>
+  <p>This site is blocked right now.</p>
+  <div id="timer">⏳ Time remaining: calculating...</div>
+  <button onclick="window.close()">Back to Work</button>
+  <div class="quote" id="quote">“Discipline is choosing between what you want now and what you want most.”</div>
+
+  <script>
+    function updateTimeLeft() {
+      chrome.storage.local.get(["focusEndTime"], (data) => {
+        if (!data.focusEndTime) return;
+        const remaining = Math.max(0, data.focusEndTime - Date.now());
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
+        document.getElementById("timer").innerText = `⏳ Time remaining: ${mins}:${secs}`;
+      });
+    }
+
+    updateTimeLeft();
+    setInterval(updateTimeLeft, 1000);
+
+    // Optional: Fetch a random quote from your JSON file (if you have one)
+    fetch(chrome.runtime.getURL('quotes.json'))
+      .then(res => res.json())
+      .then(data => {
+        const random = data[Math.floor(Math.random() * data.length)];
+        document.getElementById("quote").innerText = `“${random.text}”`;
+      })
+      .catch(() => { /* ignore if not available */ });
+  </script>
+</body>
+</html>
